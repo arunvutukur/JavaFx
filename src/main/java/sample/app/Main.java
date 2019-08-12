@@ -16,7 +16,7 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/sample.fxml"));
         //Parent root =loader.load();
         primaryStage.setTitle("JIRA_FORMAT");
-        primaryStage.setScene(new Scene(root, 675, 450));
+        primaryStage.setScene(new Scene(root, 675, 650));
         primaryStage.show();
     }
 
