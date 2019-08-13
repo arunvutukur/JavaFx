@@ -16,6 +16,7 @@ public class DataModel {
     private final int SheetNo=0;
     private final int RowNo=1;
     private int Label_Starting=3;
+    private String Filename_Output;
 
     public void appendSingleExcel(Boolean fileselected,String fileName)  {
 
@@ -74,11 +75,11 @@ public class DataModel {
 
     }
 
-    public void writeData(String fileName, LinkedList<String> label) throws CustomException, IOException, InvalidFormatException {
+    public void writeData(String fileName, LinkedList<String> label, File file) throws CustomException, IOException, InvalidFormatException {
 
             final String targetPath=fileName.replaceAll("\'","");
             System.out.println("The targetPath is ---->" +targetPath);
-
+            Filename_Output=file.getName();
             try {
                 File excelFilePath = new File(targetPath);
                 FileInputStream inputStream = new FileInputStream(new File(String.valueOf(excelFilePath)));
@@ -113,7 +114,7 @@ public class DataModel {
                         }
                     }*/
                 inputStream.close();
-                FileOutputStream outputStream = new FileOutputStream("Demo.xlsx");
+                FileOutputStream outputStream = new FileOutputStream("D:/Dummy/"+Filename_Output);
                 workbook.write(outputStream);
                 workbook.close();
                 outputStream.close();

@@ -97,12 +97,14 @@
             <Label layoutX="27.0" layoutY="80.0" prefHeight="18.0" prefWidth="70.0" text="Label" />
             <Label layoutX="19.0" layoutY="373.0" prefHeight="18.0" prefWidth="123.0" text="File Selected" />
             <Label fx:id="filestatus" layoutX="19.0" layoutY="400.0" prefHeight="18.0" prefWidth="449.0" text="File not choosen" />
-            <Button fx:id="generate" layoutX="19.0" layoutY="426.0" mnemonicParsing="false" onAction="#appendSingleCopyExcel" prefHeight="26.0" prefWidth="155.0" text="Generate" />
+            <Button fx:id="generate" layoutX="19.0" layoutY="426.0" mnemonicParsing="false" onAction="#generateByChoice" prefHeight="26.0" prefWidth="155.0" text="Generate-ALL" />
             <Line endX="536.4000244140625" layoutX="114.0" layoutY="464.0" startX="-114.00000762939453" />
             <Line endX="541.0" endY="9.1552734375E-5" layoutX="111.0" layoutY="503.0" startX="-111.0" startY="9.1552734375E-5" />
             <Label layoutX="14.0" layoutY="474.0" prefHeight="18.0" prefWidth="214.0" text="Execution Status" />
             <Label layoutX="27.0" layoutY="113.0" text="Asignee" />
             <TextField fx:id="Asignee" layoutX="165.0" layoutY="109.0" prefHeight="26.0" prefWidth="232.0" />
+            <Button fx:id="Generate_SingleCpy" layoutX="203.0" layoutY="427.0" mnemonicParsing="false" onAction="#generateSingleCpy" prefHeight="26.0" prefWidth="137.0" text="Generate-SingleCpy" />
+            <Label fx:id="executionStatus" layoutX="174.0" layoutY="475.0" prefHeight="18.0" prefWidth="77.0" text="NA" />
       </children>
     </AnchorPane>
   </children>

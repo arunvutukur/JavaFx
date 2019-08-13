@@ -18,6 +18,7 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.usermodel.Cell;
 import sample.Model.DataGenerator;
 import sample.Model.DataModel;
+import org.apache.commons.io.FilenameUtils;
 
 import java.io.*;
 import java.net.URL;
@@ -26,13 +27,13 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class Controller  implements Initializable {
+public class Controller {   // implements Initializable {
 
     @FXML
     private Label message;
 
     @FXML
-    private Button ok,generate;
+    private Button ok, generate,Generate_SingleCpy;
 
     @FXML
     private MenuItem menuitem;
@@ -43,9 +44,9 @@ public class Controller  implements Initializable {
     @FXML
     private Label filestatus;
 
-    private Boolean fileselected,fileDirSelected =false;
+    private Boolean fileselected, fileDirSelected = false;
 
-    private String fileName,dirName;
+    private String fileName, dirName;
 
     @FXML
     private Label resourceStatus;
@@ -68,28 +69,34 @@ public class Controller  implements Initializable {
     @FXML
     private TextField Component;
 
-    DataGenerator datagen=new DataGenerator();
-    DataModel dataModel =new DataModel();
+    @FXML
+    private Label executionStatus;
+
+    private File selectedFile;
+
+    DataGenerator datagen = new DataGenerator();
+    DataModel dataModel = new DataModel();
 
     final LinkedList<String> list_labels = new LinkedList();
 
-    public void generateRandom(ActionEvent event){
+    public void generateRandom(ActionEvent event) {
         Random rand = new Random();
-        int myrand = rand.nextInt(50)+1;
+        int myrand = rand.nextInt(50) + 1;
         System.out.println(Integer.toString(myrand));
         message.setText(Integer.toString(myrand));
     }
-    @FXML
-    public void getFile(ActionEvent event){
 
-        FileChooser fileChooser =new FileChooser();
-        File selectedFile= fileChooser.showOpenDialog(null);
+    @FXML
+    public void getFile(ActionEvent event) {
+
+        FileChooser fileChooser = new FileChooser();
+        selectedFile = fileChooser.showOpenDialog(null);
 
         try {
             if (selectedFile != null) {
                 System.out.println(selectedFile);
                 filestatus.setText(selectedFile.toString());
-                fileName=selectedFile.toString();
+                fileName = selectedFile.toString();
                 System.out.println("The absoulte path in file status is " + fileName);
                 //filestatus.setText(selectedFile.toString());
                 //Set FILE STATUS FLAG TO TRUE
@@ -98,30 +105,30 @@ public class Controller  implements Initializable {
                 System.out.println("ERROR EXCEPTION");
             }
             System.out.println(menu);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         File temp;
         String targetPath = fileName;
         //String targetPath = "D:/Test-Exceldemo/Demo.xlsx";
         //temp = File.createTempFile("myTempFile", ".txt");
-        targetPath=targetPath.replaceAll("\'","");
+        targetPath = targetPath.replaceAll("\'", "");
         //targetPath=targetPath.replace("\\","/");
 
         try {
-            System.out.println("The target file name is " +targetPath);
+            System.out.println("The target file name is " + targetPath);
             File tempFile = new File(targetPath);
-            System.out.println("Absoulute path is  " +tempFile.getAbsoluteFile());
+            System.out.println("Absoulute path is  " + tempFile.getAbsoluteFile());
             //boolean exists = tempFile.exists();
             //boolean exists = tempFile.isFile();
             boolean exists = tempFile.isFile();
-            System.out.println("Temp file exists : " + exists +" If not is the file exists " +tempFile.exists());
-            if(exists==true) {
+            System.out.println("Temp file exists : " + exists + " If not is the file exists " + tempFile.exists());
+            if (exists == true) {
                 resourceStatus.setText("File Exists");
-            }else {
+            } else {
                 resourceStatus.setText("File Not Available");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -130,16 +137,16 @@ public class Controller  implements Initializable {
     @FXML
     public void appendSingleCopyExcel(ActionEvent event) throws CustomException, IOException, InvalidFormatException {
 
-        list_labels.add("Name");
+        String fileNameWithOutExt = FilenameUtils.removeExtension(selectedFile.getName());
+        list_labels.add(fileNameWithOutExt);
         list_labels.add(Component.getText());
         list_labels.add("Objective");
         list_labels.add(Testlabel.getText());
         list_labels.add(Asignee.getText());
 
-
-        if(fileselected==true){
-            dataModel.writeData(fileName,list_labels);
-        }else{
+        if (fileselected == true) {
+            dataModel.writeData(fileName, list_labels,selectedFile);
+        } else {
             throw new CustomException("File not selected");
         }
     }
@@ -147,58 +154,79 @@ public class Controller  implements Initializable {
     @FXML
     public void appendMultipleCopyExcel(ActionEvent event) throws InvalidFormatException, CustomException, IOException {
 
-        list_labels.add("Name");
-        list_labels.add(Component.getText());
-        list_labels.add("Objective");
-        list_labels.add(Testlabel.getText());
-        list_labels.add(Asignee.getText());
+        //list_labels.add(selectedFile.getName()); ///<- ERROR MIGHT THROW UP HERE
+        //list_labels.add(Component.getText());
+        //list_labels.add("Objective");
+        //list_labels.add(Testlabel.getText());
+        //list_labels.add(Asignee.getText());
 
-        if(fileDirSelected==true){
-            dataModel.writeData(fileName,list_labels);
-        }else{
+        File dir = new File(dirName);
+
+
+
+        if (fileDirSelected == true) {
+            for (File file : dir.listFiles()) {
+                String fileNameWithOutExt = FilenameUtils.removeExtension(file.getName());
+                list_labels.add((fileNameWithOutExt)); ///<- Remove the extension
+                list_labels.add(Component.getText());
+                list_labels.add("Objective");
+                list_labels.add(Testlabel.getText());
+                list_labels.add(Asignee.getText());
+                System.out.println(file.getAbsoluteFile());
+                System.out.println("The file name is" + file);
+                fileName = file.toString();
+                dataModel.writeData(fileName, list_labels,file);
+                list_labels.clear();//Clear all the data in the bucket
+                System.out.println("Cleared all the files in the list");
+            }
+
+            //dataModel.writeData(fileName,list_labels);
+        } else {
             throw new CustomException("File not selected");
         }
-
-
     }
 
-
-
     @FXML
-    public void getMultipleExcelListView(ActionEvent event){
+    public void getMultipleExcelListView(ActionEvent event) {
 
         DirectoryChooser chooser = new DirectoryChooser();
-        File selectedFile= chooser.showDialog(null);
+        File selectedFile = chooser.showDialog(null);
 
         try {
             if (selectedFile != null) {
                 System.out.println(selectedFile);
                 filestatus.setText(selectedFile.toString());
-                dirName=selectedFile.toString();
+                dirName = selectedFile.toString();
                 System.out.println("The absoulte path in file status is " + dirName);
                 //filestatus.setText(selectedFile.toString());
                 //File Flag is set to true
-                fileDirSelected=true;
+                fileDirSelected = true;
+                File dir = new File(dirName);
+                System.out.println("List out all the file names");
+                for (File file : dir.listFiles()) {
+                    System.out.println(file.getAbsoluteFile());
+                    System.out.println(file.getName());
+                }
             } else {
                 System.out.println("ERROR EXCEPTION");
             }
             System.out.println(menu);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
         try {
-            System.out.println("The target file name is " +dirName);
+            System.out.println("The target file name is " + dirName);
             File tempFile = new File(dirName);
-            System.out.println("Absoulute path is  " +tempFile.getAbsolutePath());
+            System.out.println("Absoulute path is  " + tempFile.getAbsolutePath());
             boolean exists = tempFile.isDirectory();
-            System.out.println("Temp file directory exists : " +tempFile.exists());
-            if(exists==true) {
+            System.out.println("Temp file directory exists : " + tempFile.exists());
+            if (exists == true) {
                 resourceStatus.setText("Directory Exists");
-            }else {
+            } else {
                 resourceStatus.setText("Directory Not Available");
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -207,11 +235,11 @@ public class Controller  implements Initializable {
     }
 
     @FXML
-    public void getAllFilesInListView(URL url, ResourceBundle rn){
+    public void getAllFilesInListView(URL url, ResourceBundle rn) {
 
-        String dirPath =dirName;
-        LinkedList list =new LinkedList<String>();
-        listView =new ListView();
+        String dirPath = dirName;
+        LinkedList list = new LinkedList<String>();
+        listView = new ListView();
         listView.setEditable(true);
 
         final ObservableList names =
@@ -219,11 +247,12 @@ public class Controller  implements Initializable {
         final ObservableList data =
                 FXCollections.observableArrayList();
         File dir = new File(dirPath);
+
         for (File file : dir.listFiles()) {
             System.out.println(file.getAbsoluteFile());
             //list.add(file);
             data.add(file);
-
+            System.out.println(file.getName());
         }
         //listView.setItems((ObservableList) list);
         //listView.getItems().addAll(list);
@@ -232,8 +261,39 @@ public class Controller  implements Initializable {
         //listView.getItems();
     }
 
+    @FXML
+    public void generateByChoice(ActionEvent event) {
 
-    public void initialize(URL location, ResourceBundle resources) {
+
+        try{
+            appendMultipleCopyExcel(event);
+            executionStatus.setText("Success");
+
+        }catch (Exception e){
+            e.printStackTrace();
+            executionStatus.setText("Failed/Error");
+        }
+
+    }
+
+
+    @FXML
+    public void generateSingleCpy(ActionEvent event) {
+
+        try {
+            appendSingleCopyExcel(event);
+            executionStatus.setText("Success");
+        }catch (Exception e){
+            e.printStackTrace();
+            executionStatus.setText("Failed/Error");
+        }
+    }
+
+
+
+
+    //Not working
+   /* public void initialize(URL location, ResourceBundle resources) {
 
         listView = new ListView<String>();
         view=new ListView<String>();
@@ -268,5 +328,6 @@ public class Controller  implements Initializable {
 
         }
         vBox1.getChildren().add(listView);
-    }
+    }*/
+
 }
