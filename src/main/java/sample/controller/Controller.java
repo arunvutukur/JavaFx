@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class Controller {   // implements Initializable {
+public class Controller  implements Initializable {
 
     @FXML
     private Label message;
@@ -94,6 +94,7 @@ public class Controller {   // implements Initializable {
 
         try {
             if (selectedFile != null) {
+                Generate_SingleCpy.setDisable(false);
                 System.out.println(selectedFile);
                 filestatus.setText(selectedFile.toString());
                 fileName = selectedFile.toString();
@@ -162,8 +163,6 @@ public class Controller {   // implements Initializable {
 
         File dir = new File(dirName);
 
-
-
         if (fileDirSelected == true) {
             for (File file : dir.listFiles()) {
                 String fileNameWithOutExt = FilenameUtils.removeExtension(file.getName());
@@ -179,7 +178,6 @@ public class Controller {   // implements Initializable {
                 list_labels.clear();//Clear all the data in the bucket
                 System.out.println("Cleared all the files in the list");
             }
-
             //dataModel.writeData(fileName,list_labels);
         } else {
             throw new CustomException("File not selected");
@@ -194,6 +192,7 @@ public class Controller {   // implements Initializable {
 
         try {
             if (selectedFile != null) {
+                generate.setDisable(false);
                 System.out.println(selectedFile);
                 filestatus.setText(selectedFile.toString());
                 dirName = selectedFile.toString();
@@ -264,18 +263,20 @@ public class Controller {   // implements Initializable {
     @FXML
     public void generateByChoice(ActionEvent event) {
 
+        if(fileselected==true) {
+            try {
+                appendMultipleCopyExcel(event);
+                executionStatus.setText("Success");
 
-        try{
-            appendMultipleCopyExcel(event);
-            executionStatus.setText("Success");
+            } catch (Exception e) {
+                e.printStackTrace();
+                executionStatus.setText("Failed/Error");
+            }
+        }else
+        {
 
-        }catch (Exception e){
-            e.printStackTrace();
-            executionStatus.setText("Failed/Error");
         }
-
     }
-
 
     @FXML
     public void generateSingleCpy(ActionEvent event) {
@@ -289,21 +290,36 @@ public class Controller {   // implements Initializable {
         }
     }
 
+    @FXML
+    public  void compareAndExtractData(ActionEvent event){
+        try{
+            dataModel.compareAndAddData(new File("D:/Dummy/Multi-Language 5.xlsx"),new File("D:/ABsuite/Testcase-Upload-JIRA/Bulk-Upload-TC/tcs3/Painter2.xlsx"));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
 
 
     //Not working
-   /* public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources) {
+
+
+        //generate,Generate_SingleCpy;
+
+        generate.setDisable(true);
+        Generate_SingleCpy.setDisable(true);
 
         listView = new ListView<String>();
-        view=new ListView<String>();
+        view = new ListView<String>();
         //listView.setEditable(true);
         ObservableList<String> data =
                 FXCollections.observableArrayList("Nothing to show");
         vBox1 = new VBox();
         listView.setItems(data);
         view.setItems(data);
-
+        fileselected=false;
         if (fileselected == true) {
             String dirPath = dirName;
             File dir = new File(dirPath);
@@ -321,13 +337,14 @@ public class Controller {   // implements Initializable {
 
         }else{
             System.out.println("Here no files to show");
-            //data.add("No Files to show");
-            //listView.getItems().addAll(data);
+            data.add("No Files to show");
+            //listView.getItems().addAll(data);---->Caused by: java.util.ConcurrentModificationException
             //listView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
             //vBox1.getChildren().add(listView);
 
         }
-        vBox1.getChildren().add(listView);
-    }*/
+        //vBox1.getChildren().add(listView);
+
+    }
 
 }

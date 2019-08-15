@@ -4,6 +4,8 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.File;
@@ -11,12 +13,14 @@ import java.io.File;
 public class Main extends Application {
 
     public void start(Stage primaryStage) throws Exception{
-        FXMLLoader loader = new FXMLLoader();
-        //loader.setLocation(getClass().getResource("sample.fxml"));
+        //FXMLLoader loader = new FXMLLoader(getClass().getResource("/sample.fxml"));
         Parent root = FXMLLoader.load(getClass().getResource("/sample.fxml"));
-        //Parent root =loader.load();
+        //scene.getStylesheets().addAll(getClass().getResource("/style.css").toExternalForm());
         primaryStage.setTitle("JIRA_FORMAT");
-        primaryStage.setScene(new Scene(root, 675, 650));
+        Scene scene =new Scene(root);
+        //primaryStage.setScene(new Scene(root, 675, 650));
+        primaryStage.setScene(scene);
+
         primaryStage.show();
     }
 
